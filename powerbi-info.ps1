@@ -35,17 +35,19 @@ foreach ($workspaceid in $workspaces) {
     $apiUrl = "https://api.powerbi.com/v1.0/myorg/admin/reports/${reportId}/users"
     $response = Invoke-PowerBIRestMethod -Url $apiUrl -Method Get | ConvertFrom-Json
     Write-Output $response.value
-    $customObject = New-Object -TypeName PSObject -Property @{
-      WorkspaceId           = $workspaceInfo.workspaces.id
-      WorkspacesName        = $workspaceInfo.workspaces.name
-      WorkspaceType         = $workspaceInfo.workspaces.type
-      reportName            = $report.name
-      reportUserAccessRight = $response.value.reportUserAccessRight
-      emailAddress          = $response.value.emailAddress
-      displayName           = $response.value.displayName
-      identifier            = $response.value.identifier
-      principalType         = $response.value.principalType
-      userType              = $response.value.userType
+    foreach ($user in $response.value) {
+      $customObject = New-Object -TypeName PSObject -Property @{
+        WorkspaceId           = $workspaceInfo.workspaces.id
+        WorkspacesName        = $workspaceInfo.workspaces.name
+        WorkspaceType         = $workspaceInfo.workspaces.type
+        reportName            = $report.name
+        reportUserAccessRight = $user.reportUserAccessRight
+        emailAddress          = $user.emailAddress
+        displayName           = $user.displayName
+        identifier            = $user.identifier
+        principalType         = $user.principalType
+        userType              = $user.userType
+      }
     }
     $allWorkSpaces += $customObject
   }
